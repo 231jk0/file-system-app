@@ -1,6 +1,8 @@
 [submodule "file-system-app-client"]
 	path = file-system-app-client
 	url = https://github.com/231jk0/file-system-app-client.git
+	branch = main
 [submodule "file-system-app-server"]
 	path = file-system-app-server
 	url = https://github.com/231jk0/file-system-app-server.git
+	branch = main
