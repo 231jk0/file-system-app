@@ -30,7 +30,7 @@ API on `http://localhost:3000`, UI on `http://localhost:5173`. Postgres runs in 
 ### 1. Clone
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/231jk0/file-system-app.git
 cd file-system-app
 git submodule update --init --recursive
 ```
