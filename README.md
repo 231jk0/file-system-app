@@ -23,7 +23,7 @@ API details, schema, and trade-offs: [file-system-app-server/README.md](file-sys
 - Docker
 - Docker Compose
 
-**Docker** and **Docker Compose** (v2: `docker compose`, the plugin shipped with Docker Desktop / current Docker Engine) are used in both paths below. Local development: Docker Compose starts Postgres (`postgres-for-development.yml`). Full st <2ack: Docker Compose starts Traefik, Postgres, migrate, API, and the UI (`docker-compose.yml`). A standalone `docker-compose` binary is not required. Node.js and npm are only needed for local development; the full stack installs Node inside the images.
+**Docker** and **Docker Compose** (v2: `docker compose`, the plugin shipped with Docker Desktop / current Docker Engine) are used in both paths below. Local development: Docker Compose starts Postgres (`postgres-for-development.yml`). Full stack: Docker Compose starts Traefik, Postgres, migrate, API, and the UI (`docker-compose.yml`). A standalone `docker-compose` binary is not required. Node.js and npm are only needed for local development; the full stack installs Node inside the images.
 
 There are no committed `.env` files. Copy each `.env.example` as shown. The example values work as-is.
 
