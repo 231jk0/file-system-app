@@ -8,12 +8,16 @@ Browser-based folder/file tree (names only — no file content). Create folders 
 
 API details, schema, and trade-offs: [file-system-app-server/README.md](file-system-app-server/README.md).
 
-| | Local development | Docker Compose |
-| --- | --- | --- |
-| **Use when** | Changing code (hot reload) | Trying the full HTTPS stack, or deploying |
-| **Open** | [http://localhost:5173](http://localhost:5173) | [https://localhost.prijedlog.com](https://localhost.prijedlog.com) |
-| **Env files** | Client + server `.env` | Root `.env` only |
-| **From scratch** | [Local development](#local-development) | [Docker Compose](#docker-compose) |
+
+|                  | Local development                              | Docker Compose                                                     |
+| ---------------- | ---------------------------------------------- | ------------------------------------------------------------------ |
+| **Use when**     | Changing code (hot reload)                     | Trying the full HTTPS stack, or deploying                          |
+| **Open**         | [http://localhost:5173](http://localhost:5173) | [https://localhost.prijedlog.com](https://localhost.prijedlog.com) |
+| **Env files**    | Client + server `.env`                         | Root `.env` only                                                   |
+| **From scratch** | [Local development](#local-development)        | [Docker Compose](#docker-compose)                                  |
+
+
+
 
 ## Prerequisites
 
@@ -35,7 +39,18 @@ cd file-system-app
 git submodule update --init --recursive
 ```
 
-After a later `git pull`, run the submodule command again if the client or server submodule moved.
+Each submodule checks out the **commit recorded in this repo**, not the tip of `main`. Detached HEAD (`HEAD detached at …`) is expected and is what you want for a reproducible run.
+
+If you will change the client or server, attach them to `main` afterward:
+
+```bash
+git -C file-system-app-client checkout main
+git -C file-system-app-server checkout main
+```
+
+`branch = main` in `.gitmodules` is only used by `git submodule update --remote`. It does not make `update --init` check out that branch.
+
+After a later `git pull`, run `git submodule update --init --recursive` again if the client or server submodule moved.
 
 ### 2. Env files and install
 
@@ -64,6 +79,8 @@ DATABASE_URL=postgresql://myuser:mypassword@localhost:5432/mydb
 VITE_SERVER_URL=http://localhost:3000/api/v1
 ```
 
+
+
 ### 3. Postgres, migrations, then the app
 
 From the repo root, in **two terminals**:
@@ -82,7 +99,7 @@ npm run dev:client
 
 Open [http://localhost:5173](http://localhost:5173). Stop the Node processes with Ctrl+C. Postgres stays up until `npm run postgres:down`.
 
-**After a later `git pull`:** re-run the two `npm install` commands, then the same Postgres / migrate / two-terminal steps. Skip copying `.env` files if they already exist.
+**After a later** `git pull`**:** re-run the two `npm install` commands, then the same Postgres / migrate / two-terminal steps. Skip copying `.env` files if they already exist.
 
 ## Docker Compose
 
