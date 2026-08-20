@@ -1,0 +1,13 @@
+.git
+**/.git
+**/node_modules
+**/dist
+**/.env
+**/.env.local
+**/.env.production
+**/.env.development
+**/.env.*.local
+not-versioned
+**/.vscode
+**/.idea
+**/*.md

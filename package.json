@@ -1,0 +1,14 @@
+{
+	"name": "file-system-app",
+	"version": "1.0.0",
+	"scripts": {
+		"postgres:check": "docker compose -f postgres-for-development.yml ps --status running -q postgres | grep -q . || (echo 'Postgres is not running. Start it with: npm run postgres:up' && exit 1)",
+		"postgres:down": "docker compose -f postgres-for-development.yml down",
+		"postgres:up": "docker compose -f postgres-for-development.yml up -d --wait",
+		"postgres:migrate-up": "cd ./file-system-app-server && npm run migrate:up",
+		"dev:server": "npm run postgres:check && cd ./file-system-app-server && npm run dev",
+		"dev:client": "cd ./file-system-app-client && npm run dev",
+		"docker-compose": "docker compose down; docker compose build --no-cache; docker compose up --force-recreate -d"
+	},
+	"private": true
+}

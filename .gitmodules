@@ -1,0 +1,6 @@
+[submodule "file-system-app-client"]
+	path = file-system-app-client
+	url = ./file-system-app-client
+[submodule "file-system-app-server"]
+	path = file-system-app-server
+	url = ./file-system-app-server

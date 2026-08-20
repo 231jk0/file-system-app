@@ -1,0 +1,7 @@
+# Local / secret env files. Templates (.env.example) and .env.test stay tracked.
+.env
+.env.local
+.env.production
+.env.development
+.env.*.local
+not-versioned/
