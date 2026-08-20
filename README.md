@@ -1,6 +1,6 @@
 # File System App
 
-Browser-based folder/file tree (names only — no file content). Create folders and files, browse, search by exact name or prefix (top 10 typeahead), and delete.
+Browser-based folder/file tree (names only — no file content). Create folders and files, browse, search files by prefix (top 10 typeahead, in-folder or across all files), and delete. Exact-name search is on the API.
 
 - **Client:** React (Vite) in `file-system-app-client`
 - **API:** Express + TypeScript in `file-system-app-server`
@@ -8,28 +8,28 @@ Browser-based folder/file tree (names only — no file content). Create folders 
 
 API details, schema, and trade-offs: [file-system-app-server/README.md](file-system-app-server/README.md).
 
-
-|                  | Local development                              | Docker Compose                                                     |
-| ---------------- | ---------------------------------------------- | ------------------------------------------------------------------ |
-| **Use when**     | Changing code (hot reload)                     | Trying the full HTTPS stack, or deploying                          |
-| **Open**         | [http://localhost:5173](http://localhost:5173) | [https://localhost.prijedlog.com](https://localhost.prijedlog.com) |
-| **Env files**    | Client + server `.env`                         | Root `.env` only                                                   |
-| **From scratch** | [Local development](#local-development)        | [Docker Compose](#docker-compose)                                  |
-
-
-
+| | Local development | Docker Compose |
+| --- | --- | --- |
+| **Use when** | Changing code (hot reload) | Trying the full HTTPS stack, or deploying |
+| **Needs** | Node.js, npm, Docker, Docker Compose | Docker, Docker Compose |
+| **Open** | [http://localhost:5173](http://localhost:5173) | [https://localhost.prijedlog.com](https://localhost.prijedlog.com) |
+| **Env files** | Client + server `.env` | Root `.env` only |
+| **From scratch** | [Local development](#local-development) | [Docker Compose](#docker-compose) |
 
 ## Prerequisites
 
 - Node.js 22+
 - npm
-- Docker and Docker Compose
+- Docker
+- Docker Compose
+
+**Docker** and **Docker Compose** (v2: `docker compose`, the plugin shipped with Docker Desktop / current Docker Engine) are used in both paths below. Local development: Docker Compose starts Postgres (`postgres-for-development.yml`). Full st <2ack: Docker Compose starts Traefik, Postgres, migrate, API, and the UI (`docker-compose.yml`). A standalone `docker-compose` binary is not required. Node.js and npm are only needed for local development; the full stack installs Node inside the images.
 
 There are no committed `.env` files. Copy each `.env.example` as shown. The example values work as-is.
 
 ## Local development
 
-API on `http://localhost:3000`, UI on `http://localhost:5173`. Postgres runs in Docker (`postgres-for-development.yml`) on `localhost:5432`.
+API on `http://localhost:3000`, UI on `http://localhost:5173`. Postgres runs in Docker via Docker Compose (`postgres-for-development.yml`) on `localhost:5432`.
 
 ### 1. Clone
 
@@ -79,11 +79,9 @@ DATABASE_URL=postgresql://myuser:mypassword@localhost:5432/mydb
 VITE_SERVER_URL=http://localhost:3000/api/v1
 ```
 
-
-
 ### 3. Postgres, migrations, then the app
 
-From the repo root, in **two terminals**:
+Docker and Docker Compose must already be installed. From the repo root, in **two terminals**:
 
 ```bash
 npm run postgres:up
@@ -95,17 +93,17 @@ npm run dev:server
 npm run dev:client
 ```
 
-`postgres:up` waits until the container is healthy. `dev:server` exits if that container is not running.
+`postgres:up` is `docker compose -f postgres-for-development.yml up -d --wait`. It waits until the container is healthy. `dev:server` exits if that container is not running.
 
-Open [http://localhost:5173](http://localhost:5173). Stop the Node processes with Ctrl+C. Postgres stays up until `npm run postgres:down`.
+Open [http://localhost:5173](http://localhost:5173). Stop the Node processes with Ctrl+C. Postgres stays up until `npm run postgres:down` (`docker compose -f postgres-for-development.yml down`).
 
-**After a later** `git pull`**:** re-run the two `npm install` commands, then the same Postgres / migrate / two-terminal steps. Skip copying `.env` files if they already exist.
+**After a later `git pull`:** re-run the two `npm install` commands, then the same Postgres / migrate / two-terminal steps. Skip copying `.env` files if they already exist.
 
 ## Docker Compose
 
 The root `docker-compose.yml` is the full stack: Traefik (HTTP→HTTPS), Postgres (internal network only), a one-shot migrate job, the API, and nginx serving the built UI. You do **not** copy the client or server `.env` files — Compose injects `DATABASE_URL`, `CLIENT_URL`, and the client API URL (`/api/v1`) at build/run time.
 
-Ports **80** and **443** must be free on the host.
+Needs **Docker** and **Docker Compose**. Ports **80** and **443** must be free on the host. You do not need Node.js on the host for this path.
 
 ### On this machine (no public DNS)
 
@@ -118,7 +116,7 @@ cp .env.example .env
 npm run docker-compose
 ```
 
-`npm run docker-compose` tears the stack down, rebuilds images from current source, and starts it again.
+`npm run docker-compose` is `docker compose down`, then `docker compose build --no-cache`, then `docker compose up --force-recreate -d`. It tears the stack down, rebuilds images from current source, and starts it again.
 
 Open [https://localhost.prijedlog.com](https://localhost.prijedlog.com). Let's Encrypt cannot issue a certificate for that hostname, so the browser will warn about a self-signed certificate — continue anyway.
 
